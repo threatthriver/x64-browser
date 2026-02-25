@@ -1,7 +1,27 @@
 {
   "name": "x64-browser",
-  "private": true,
   "version": "0.1.0",
+  "description": "A high-performance, privacy-focused web browser for macOS built from scratch",
+  "license": "MIT",
+  "author": "X64 Browser Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/threatthriver/x64-browser.git"
+  },
+  "homepage": "https://github.com/threatthriver/x64-browser#readme",
+  "bugs": {
+    "url": "https://github.com/threatthriver/x64-browser/issues"
+  },
+  "keywords": [
+    "browser",
+    "macos",
+    "tauri",
+    "react",
+    "rust",
+    "webkit",
+    "privacy",
+    "open-source"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",

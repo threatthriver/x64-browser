@@ -1,7 +1,201 @@
-# Tauri + React + Typescript
+# X64 Browser
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+<div align="center">
 
-## Recommended IDE Setup
+![X64 Browser](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white)
+![Tauri](https://img.shields.io/badge/Tauri-24C8DB?style=for-the-badge&logo=tauri&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+**A high-performance, privacy-focused web browser for macOS built from scratch**
+
+[Features](#features) • [Installation](#installation) • [Development](#development) • [Contributing](#contributing) • [License](#license)
+
+</div>
+
+---
+
+## 🌟 About X64 Browser
+
+X64 Browser is a modern, lightweight web browser built specifically for macOS using [Tauri](https://tauri.app/), [React](https://react.dev/), and [Rust](https://www.rust-lang.org/). It combines the speed and security of native macOS technologies (WebKit/WKWebView) with the flexibility of a modern web frontend.
+
+### Why X64 Browser?
+
+- 🚀 **Lightning Fast** - Native Rust backend with WKWebView for optimal performance
+- 🔒 **Privacy First** - No telemetry, no data collection, built-in tracking protection
+- 🎨 **Mac-Native Design** - Beautiful, macOS-optimized UI that feels right at home
+- 🔌 **Chrome Extension Support** - Your favorite extensions work seamlessly
+- 💻 **Developer Friendly** - Built-in DevTools with full debugging capabilities
+
+---
+
+## ✨ Features
+
+### Core Browsing
+- 📑 **Tabbed Browsing** - Smooth tab management with drag-to-reorder and keyboard shortcuts
+- 🔖 **Bookmarks** - Organize your favorite sites with folders and quick access
+- 📜 **History** - Full browsing history with search and time-based filtering
+- ⬇️ **Downloads** - Built-in download manager with pause/resume support
+
+### Developer Tools
+- 🛠️ **Built-in DevTools** - Console, Elements, Network, and Sources panels
+- 🔍 **JavaScript Debugging** - Full debugging capabilities with breakpoints
+- 📊 **Performance Profiling** - Analyze page performance
+
+### Extension Support
+- 🔌 **Chrome Extensions** - Manifest V2 and V3 support
+- 📦 **Extension Manager** - Easy install, configure, and manage extensions
+
+### User Experience
+- 🌓 **Dark/Light Mode** - Automatic theme switching based on system preferences
+- ⌨️ **Keyboard Shortcuts** - Comprehensive shortcut support for power users
+- 📱 **Touch Bar** - Native Touch Bar support for compatible MacBooks
+- 🎯 **Smart Search** - Intelligent URL bar with autocomplete and suggestions
+
+---
+
+## 📸 Screenshots
+
+*Coming soon - Application is currently in development*
+
+---
+
+## 🚀 Installation
+
+### Prerequisites
+
+- **macOS** 10.15 (Catalina) or later
+- **Node.js** 18.x or later
+- **Rust** 1.70 or later ([Install via rustup](https://rustup.rs/))
+
+### From Source
+
+```bash
+# Clone the repository
+git clone https://github.com/threatthriver/x64-browser.git
+cd x64-browser
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run tauri dev
+```
+
+### Building for Production
+
+```bash
+# Build the application
+npm run tauri build
+
+# The built application will be in src-tauri/target/release/bundle/
+```
+
+---
+
+## 🛠️ Development
+
+### Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | React 19, TypeScript, Vite |
+| **Styling** | Tailwind CSS 4 |
+| **State Management** | Zustand |
+| **Backend** | Rust, Tauri 2.x |
+| **WebView** | WKWebView (macOS) |
+
+### Project Structure
+
+```
+x64-browser/
+├── src/                    # Frontend React/TypeScript code
+│   ├── components/         # UI components (tabs, navigation, etc.)
+│   ├── stores/             # Zustand state stores
+│   ├── types/              # TypeScript type definitions
+│   └── assets/             # Static assets
+├── src-tauri/              # Rust backend
+│   ├── src/                # Rust source code
+│   ├── icons/              # Application icons
+│   └── tauri.conf.json     # Tauri configuration
+├── public/                 # Public assets
+└── package.json            # Node.js dependencies and scripts
+```
+
+### Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start Vite development server |
+| `npm run tauri dev` | Run Tauri app in development mode |
+| `npm run build` | Build frontend for production |
+| `npm run tauri build` | Build complete application |
+| `npm run preview` | Preview production build |
+
+### Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd + T` | New tab |
+| `Cmd + W` | Close tab |
+| `Cmd + Shift + T` | Reopen closed tab |
+| `Cmd + L` | Focus URL bar |
+| `Cmd + R` | Refresh page |
+| `Cmd + Shift + R` | Hard refresh |
+| `Cmd + D` | Bookmark page |
+| `Cmd + Shift + B` | Bookmark manager |
+| `Cmd + Shift + L` | Downloads |
+| `Cmd + Opt + I` | Open DevTools |
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
+
+- Code of Conduct
+- Development setup
+- Pull request process
+- Coding standards
+
+### Ways to Contribute
+
+- 🐛 Report bugs and issues
+- 💡 Suggest new features
+- 📝 Improve documentation
+- 🔧 Submit bug fixes
+- 🎨 Help with UI/UX improvements
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## 🙏 Acknowledgments
+
+- [Tauri](https://tauri.app/) - The framework powering our native backend
+- [React](https://react.dev/) - The UI library for our frontend
+- [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview) - Apple's web rendering engine
+- [Zustand](https://zustand-demo.pmnd.rs/) - Simple state management
+
+---
+
+## 📬 Contact
+
+- **Repository**: [github.com/threatthriver/x64-browser](https://github.com/threatthriver/x64-browser)
+- **Issues**: [Report a bug](https://github.com/threatthriver/x64-browser/issues)
+- **Discussions**: [Join the conversation](https://github.com/threatthriver/x64-browser/discussions)
+
+---
+
+<div align="center">
+
+**Built with ❤️ for macOS**
+
+[⬆ Back to Top](#x64-browser)
+
+</div>
