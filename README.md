@@ -2,13 +2,13 @@
 
 <div align="center">
 
-![X64 Browser](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white)
+![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows-blue?style=for-the-badge)
 ![Tauri](https://img.shields.io/badge/Tauri-24C8DB?style=for-the-badge&logo=tauri&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
 
-**A high-performance, privacy-focused web browser for macOS built from scratch**
+**A high-performance, privacy-focused web browser for macOS and Windows built from scratch**
 
 [Features](#features) • [Installation](#installation) • [Development](#development) • [Contributing](#contributing) • [License](#license)
 
@@ -18,13 +18,13 @@
 
 ## 🌟 About X64 Browser
 
-X64 Browser is a modern, lightweight web browser built specifically for macOS using [Tauri](https://tauri.app/), [React](https://react.dev/), and [Rust](https://www.rust-lang.org/). It combines the speed and security of native macOS technologies (WebKit/WKWebView) with the flexibility of a modern web frontend.
+X64 Browser is a modern, lightweight web browser built using [Tauri](https://tauri.app/), [React](https://react.dev/), and [Rust](https://www.rust-lang.org/). It combines the speed and security of native platform technologies (WebKit on macOS, WebView2 on Windows) with the flexibility of a modern web frontend.
 
 ### Why X64 Browser?
 
-- 🚀 **Lightning Fast** - Native Rust backend with WKWebView for optimal performance
+- 🚀 **Lightning Fast** - Native Rust backend with platform-native WebView for optimal performance
 - 🔒 **Privacy First** - No telemetry, no data collection, built-in tracking protection
-- 🎨 **Mac-Native Design** - Beautiful, macOS-optimized UI that feels right at home
+- 🎨 **Native Design** - Beautiful, platform-optimized UI that feels right at home on macOS and Windows
 - 🔌 **Chrome Extension Support** - Your favorite extensions work seamlessly
 - 💻 **Developer Friendly** - Built-in DevTools with full debugging capabilities
 
@@ -50,8 +50,9 @@ X64 Browser is a modern, lightweight web browser built specifically for macOS us
 ### User Experience
 - 🌓 **Dark/Light Mode** - Automatic theme switching based on system preferences
 - ⌨️ **Keyboard Shortcuts** - Comprehensive shortcut support for power users
-- 📱 **Touch Bar** - Native Touch Bar support for compatible MacBooks
+- 📱 **Touch Bar** - Native Touch Bar support for compatible MacBooks (macOS)
 - 🎯 **Smart Search** - Intelligent URL bar with autocomplete and suggestions
+- 🪟 **Native Window Controls** - Traffic lights on macOS, standard controls on Windows
 
 ---
 
@@ -65,9 +66,18 @@ X64 Browser is a modern, lightweight web browser built specifically for macOS us
 
 ### Prerequisites
 
+#### macOS
 - **macOS** 10.15 (Catalina) or later
 - **Node.js** 18.x or later
 - **Rust** 1.70 or later ([Install via rustup](https://rustup.rs/))
+- **Xcode Command Line Tools**
+
+#### Windows
+- **Windows** 10 or later
+- **Node.js** 18.x or later
+- **Rust** 1.70 or later ([Install via rustup](https://rustup.rs/))
+- **Microsoft Visual Studio C++ Build Tools**
+- **WebView2** (usually pre-installed on Windows 10/11)
 
 ### From Source
 
@@ -78,19 +88,35 @@ cd x64-browser
 
 # Install dependencies
 npm install
+```
 
-# Start development server
+### Development
+
+```bash
+# macOS
+npm run tauri dev
+
+# Windows (PowerShell/CMD)
 npm run tauri dev
 ```
 
 ### Building for Production
 
 ```bash
-# Build the application
+# macOS - Creates DMG and APP bundle
 npm run tauri build
 
-# The built application will be in src-tauri/target/release/bundle/
+# Windows - Creates MSI and NSIS installer
+npm run tauri build
+
+# Built applications location:
+# macOS: src-tauri/target/release/bundle/dmg/ or .app
+# Windows: src-tauri/target/release/bundle/msi/ or .exe
 ```
+
+### Pre-built Binaries
+
+Download pre-built binaries from the [Releases](https://github.com/threatthriver/x64-browser/releases) page.
 
 ---
 
@@ -104,7 +130,7 @@ npm run tauri build
 | **Styling** | Tailwind CSS 4 |
 | **State Management** | Zustand |
 | **Backend** | Rust, Tauri 2.x |
-| **WebView** | WKWebView (macOS) |
+| **WebView** | WKWebView (macOS) / WebView2 (Windows) |
 
 ### Project Structure
 
@@ -135,18 +161,18 @@ x64-browser/
 
 ### Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Cmd + T` | New tab |
-| `Cmd + W` | Close tab |
-| `Cmd + Shift + T` | Reopen closed tab |
-| `Cmd + L` | Focus URL bar |
-| `Cmd + R` | Refresh page |
-| `Cmd + Shift + R` | Hard refresh |
-| `Cmd + D` | Bookmark page |
-| `Cmd + Shift + B` | Bookmark manager |
-| `Cmd + Shift + L` | Downloads |
-| `Cmd + Opt + I` | Open DevTools |
+| Action | macOS | Windows |
+|--------|-------|---------|
+| New tab | `Cmd + T` | `Ctrl + T` |
+| Close tab | `Cmd + W` | `Ctrl + W` |
+| Reopen closed tab | `Cmd + Shift + T` | `Ctrl + Shift + T` |
+| Focus URL bar | `Cmd + L` | `Ctrl + L` |
+| Refresh page | `Cmd + R` | `Ctrl + R` |
+| Hard refresh | `Cmd + Shift + R` | `Ctrl + Shift + R` |
+| Bookmark page | `Cmd + D` | `Ctrl + D` |
+| Bookmark manager | `Cmd + Shift + B` | `Ctrl + Shift + B` |
+| Downloads | `Cmd + Shift + L` | `Ctrl + Shift + L` |
+| Open DevTools | `Cmd + Opt + I` | `Ctrl + Shift + I` |
 
 ---
 
@@ -179,7 +205,8 @@ This project is licensed under the [MIT License](LICENSE).
 
 - [Tauri](https://tauri.app/) - The framework powering our native backend
 - [React](https://react.dev/) - The UI library for our frontend
-- [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview) - Apple's web rendering engine
+- [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview) - Apple's web rendering engine (macOS)
+- [WebView2](https://docs.microsoft.com/en-us/microsoft-edge/webview2/) - Microsoft Edge WebView2 (Windows)
 - [Zustand](https://zustand-demo.pmnd.rs/) - Simple state management
 
 ---
@@ -194,7 +221,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 <div align="center">
 
-**Built with ❤️ for macOS**
+**Built with ❤️ for macOS and Windows**
 
 [⬆ Back to Top](#x64-browser)
 

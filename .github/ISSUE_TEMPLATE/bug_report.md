@@ -41,11 +41,20 @@ body:
       description: What actually happens?
     validations:
       required: true
-  - type: input
-    id: macos-version
+  - type: dropdown
+    id: platform
     attributes:
-      label: macOS Version
-      placeholder: e.g., macOS 15.3 (Sequoia)
+      label: Platform
+      options:
+        - macOS
+        - Windows
+    validations:
+      required: true
+  - type: input
+    id: os-version
+    attributes:
+      label: OS Version
+      placeholder: e.g., macOS 15.3 (Sequoia) or Windows 11 24H2
     validations:
       required: true
   - type: input
@@ -61,7 +70,9 @@ body:
       label: Hardware
       options:
         - Apple Silicon (M1/M2/M3)
-        - Intel
+        - Intel Mac
+        - Windows x64
+        - Windows ARM
     validations:
       required: true
   - type: textarea

@@ -3,16 +3,17 @@
 ## 1. Project Overview
 
 ### Project Name
-**X64 Browser** - A high-performance, Mac-optimized web browser built from scratch
+**X64 Browser** - A high-performance, cross-platform web browser built from scratch
 
 ### Project Type
 Desktop Web Browser Application
 
 ### Core Feature Summary
-A fast, lightweight web browser for macOS built with Tauri that supports tabbed browsing, bookmarks, history, downloads, DevTools, and Chrome extensions.
+A fast, lightweight web browser for macOS and Windows built with Tauri that supports tabbed browsing, bookmarks, history, downloads, DevTools, and Chrome extensions.
 
 ### Target Users
 - macOS users seeking a fast, privacy-focused alternative to Safari and Chrome
+- Windows users looking for a lightweight, privacy-focused browser
 - Power users who want Chrome extension support with better performance
 - Developers who need a lightweight browser with DevTools
 
@@ -21,7 +22,7 @@ A fast, lightweight web browser for macOS built with Tauri that supports tabbed 
 ## 2. Technology Stack
 
 ### Framework
-- **Tauri 2.x** - Uses Rust backend with WebKit (WKWebView on macOS)
+- **Tauri 2.x** - Uses Rust backend with native WebView (WKWebView on macOS, WebView2 on Windows)
 - **Frontend**: React 18 + TypeScript + Vite
 - **Styling**: CSS Modules or Tailwind CSS
 
@@ -33,26 +34,41 @@ A fast, lightweight web browser for macOS built with Tauri that supports tabbed 
 - `@tauri-apps/plugin-store` - Local storage for settings/bookmarks
 - `webextension-polyfill` - Chrome extension API support
 
+### Platform-Specific Technologies
+
+| Platform | WebView | Window Controls | Notes |
+|----------|---------|-----------------|-------|
+| **macOS** | WKWebView | Traffic Lights | Touch Bar support |
+| **Windows** | WebView2 (Edge Chromium) | Standard Min/Max/Close | Windows 10/11 |
+
 ---
 
 ## 3. UI/UX Specification
 
 ### Window Model
 - **Main Window**: Single primary window with tabbed interface
-- **Dialog Windows**: Native macOS dialogs for settings, downloads, etc.
+- **Dialog Windows**: Native platform dialogs for settings, downloads, etc.
 - **Frameless Window**: Custom title bar with native-like controls
+
+### Platform-Specific Window Controls
+
+| Feature | macOS | Windows |
+|---------|-------|---------|
+| Window Buttons | Traffic Lights (left) | Min/Max/Close (right) |
+| Title Bar | Unified with tab bar | Standard or custom |
+| Transparency | Vibrancy/Blur | Acrylic/Mica (Windows 11) |
 
 ### Layout Structure
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ [Title Bar: Traffic Lights] [Tab Bar]              [+]     │
+│ [Title Bar: Window Controls] [Tab Bar]            [+]     │
 ├─────────────────────────────────────────────────────────────┤
 │ [<][>][↻] [URL Bar with security indicator]     [⋮][📖][⚙] │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │                     Web Content Area                        │
-│                   (WKWebView Instance)                     │
+│                   (WebView Instance)                        │
 │                                                             │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
@@ -74,7 +90,9 @@ A fast, lightweight web browser for macOS built with Tauri that supports tabbed 
 | Tab Inactive | `#D1D1D6` | `#2C2C2E` |
 
 #### Typography
-- **Font Family**: `-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif`
+- **Font Family**: 
+  - macOS: `-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif`
+  - Windows: `"Segoe UI", "Microsoft YaHei", sans-serif`
 - **Tab Title**: 13px, medium weight
 - **URL Bar**: 14px, regular weight
 - **Button Labels**: 13px, medium weight
@@ -86,16 +104,26 @@ A fast, lightweight web browser for macOS built with Tauri that supports tabbed 
 - Tab bar height: 36px
 - Title bar height: 28px
 
-#### macOS-Specific Elements
+#### Platform-Specific Elements
+
+**macOS:**
 - **Traffic Lights**: Custom close/minimize/zoom buttons matching macOS design
 - **Unified Title/Tab Bar**: Integrated toolbar and tab bar
 - **Touch Bar**: Support for navigation controls (if applicable)
 - **Menu Bar**: Full macOS menu bar integration
+- **Vibrancy**: Translucent materials for sidebar and toolbars
+
+**Windows:**
+- **Window Controls**: Standard minimize/maximize/close on right
+- **Title Bar**: Custom or native title bar option
+- **Mica/Acrylic**: Windows 11 material support for modern look
+- **Taskbar Integration**: Jump lists and thumbnail previews
 
 ### Components
 
 #### 1. Title Bar
-- Custom traffic light buttons (close: `#FF5F56`, minimize: `#FFBD2E`, zoom: `#27C93F`)
+- **macOS**: Custom traffic light buttons (close: `#FF5F56`, minimize: `#FFBD2E`, zoom: `#27C93F`)
+- **Windows**: Standard window controls or custom styled
 - Draggable region for window movement
 - Tab bar integration
 
@@ -256,9 +284,11 @@ Local Storage/
 
 ---
 
-## 5. System Integration (macOS)
+## 5. System Integration
 
 ### Required Capabilities
+
+#### macOS
 - [ ] Window Management (minimize, maximize, fullscreen)
 - [ ] Menu Bar Integration
 - [ ] Keyboard Shortcuts
@@ -266,6 +296,15 @@ Local Storage/
 - [ ] Clipboard (copy/paste URLs)
 - [ ] Touch Bar Support
 - [ ] Dock Icon (downloading badge)
+
+#### Windows
+- [ ] Window Management (minimize, maximize, restore)
+- [ ] Taskbar Integration (jump lists, previews)
+- [ ] Keyboard Shortcuts
+- [ ] Drag and Drop (files, URLs)
+- [ ] Clipboard (copy/paste URLs)
+- [ ] File Explorer Integration
+- [ ] System Tray Icon (optional)
 
 ### Security
 - [ ] HTTPS by default
