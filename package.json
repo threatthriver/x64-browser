@@ -1,55 +1,61 @@
 {
   "name": "x64-browser",
+  "private": true,
   "version": "0.1.0",
-  "description": "A high-performance, privacy-focused web browser for macOS built from scratch",
-  "license": "MIT",
-  "author": "X64 Browser Contributors",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/threatthriver/x64-browser.git"
-  },
-  "homepage": "https://github.com/threatthriver/x64-browser#readme",
-  "bugs": {
-    "url": "https://github.com/threatthriver/x64-browser/issues"
-  },
-  "keywords": [
-    "browser",
-    "macos",
-    "tauri",
-    "react",
-    "rust",
-    "webkit",
-    "privacy",
-    "open-source"
-  ],
+  "description": "A high-performance, privacy-focused web browser for macOS and Windows built with Electron",
+  "main": "main.cjs",
+  "author": "X64 Browser Team",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:build": "vite build && cp electron/main.js . && electron-builder",
+    "electron:start": "electron dist-electron"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2",
-    "@tauri-apps/plugin-dialog": "^2.6.0",
-    "@tauri-apps/plugin-fs": "^2.4.5",
-    "@tauri-apps/plugin-log": "^2.8.0",
-    "@tauri-apps/plugin-opener": "^2",
-    "@tauri-apps/plugin-shell": "^2.3.5",
-    "@tauri-apps/plugin-store": "^2.4.2",
-    "@tauri-apps/plugin-http": "^2",
-    "zustand": "^5.0.0",
+    "lucide-react": "^0.460.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.1",
-    "@tauri-apps/cli": "^2",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.6.0",
+    "concurrently": "^9.1.2",
+    "electron": "^34.0.0",
+    "electron-builder": "^25.1.8",
     "tailwindcss": "^4.2.1",
     "typescript": "~5.8.3",
-    "vite": "^7.0.4"
+    "vite": "^7.0.4",
+    "wait-on": "^8.0.2"
+  },
+  "build": {
+    "appId": "com.x64browser.app",
+    "productName": "X64 Browser",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "main.cjs",
+      "electron/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.internet",
+      "target": ["dmg", "zip"],
+      "icon": "src-tauri/icons/icon.icns"
+    },
+    "win": {
+      "target": ["nsis", "portable"],
+      "icon": "src-tauri/icons/icon.ico"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Network"
+    }
   }
 }

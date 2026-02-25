@@ -1,44 +1,27 @@
-import { useState, useEffect } from 'react';
-import { Settings } from '../types';
+import { create } from 'zustand';
 
-const DEFAULT_SETTINGS: Settings = {
-  theme: 'system',
-  homepage: 'https://duckduckgo.com',
-  searchEngine: 'duckduckgo',
-  showBookmarksBar: false,
-};
-
-export function useSettingsStore() {
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('x64-browser-settings');
-    if (saved) {
-      try {
-        setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(saved) });
-      } catch {
-        setSettings(DEFAULT_SETTINGS);
-      }
-    }
-    setIsLoaded(true);
-  }, []);
-
-  const updateSettings = (updates: Partial<Settings>) => {
-    const newSettings = { ...settings, ...updates };
-    setSettings(newSettings);
-    localStorage.setItem('x64-browser-settings', JSON.stringify(newSettings));
-  };
-
-  const resetSettings = () => {
-    setSettings(DEFAULT_SETTINGS);
-    localStorage.removeItem('x64-browser-settings');
-  };
-
-  return {
-    settings,
-    updateSettings,
-    resetSettings,
-    isLoaded,
-  };
+interface Settings {
+  theme: 'light' | 'dark' | 'system';
+  searchEngine: 'google' | 'duckduckgo' | 'bing';
+  homepage: string;
+  showBookmarksBar: boolean;
 }
+
+interface SettingsState {
+  settings: Settings;
+  updateSettings: (updates: Partial<Settings>) => void;
+}
+
+export const useSettingsStore = create<SettingsState>((set) => ({
+  settings: {
+    theme: 'system',
+    searchEngine: 'google',
+    homepage: 'about:blank',
+    showBookmarksBar: true,
+  },
+  updateSettings: (updates) => {
+    set((state) => ({
+      settings: { ...state.settings, ...updates },
+    }));
+  },
+}));

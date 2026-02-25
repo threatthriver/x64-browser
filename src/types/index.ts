@@ -1,9 +1,9 @@
 export interface Tab {
   id: string;
-  title: string;
   url: string;
-  favicon: string;
-  isLoading: boolean;
+  title: string;
+  favicon?: string;
+  loading: boolean;
   canGoBack: boolean;
   canGoForward: boolean;
 }
@@ -12,22 +12,14 @@ export interface Bookmark {
   id: string;
   title: string;
   url: string;
-  folder?: string;
-  createdAt: number;
+  createdAt: string;
 }
 
 export interface HistoryEntry {
   id: string;
-  title: string;
   url: string;
-  visitedAt: number;
-}
-
-export interface Settings {
-  theme: 'light' | 'dark' | 'system';
-  homepage: string;
-  searchEngine: string;
-  showBookmarksBar: boolean;
+  title: string;
+  timestamp: number;
 }
 
 export interface Download {
@@ -35,5 +27,15 @@ export interface Download {
   url: string;
   filename: string;
   progress: number;
-  status: 'pending' | 'downloading' | 'completed' | 'failed';
+  status: 'pending' | 'downloading' | 'paused' | 'completed' | 'failed';
+  receivedBytes: number;
+  totalBytes: number;
+  savePath?: string;
+}
+
+export interface Settings {
+  theme: 'light' | 'dark' | 'system';
+  searchEngine: 'google' | 'duckduckgo' | 'bing';
+  homepage: string;
+  showBookmarksBar: boolean;
 }
