@@ -1,9 +1,10 @@
 import type { Tab as TabType } from '../types';
 import { Tab } from './Tab';
+import { Plus } from 'lucide-react';
 
 interface TabBarProps {
   tabs: TabType[];
-  activeTabId: string;
+  activeTabId: string | null;
   onTabClick: (id: string) => void;
   onTabClose: (id: string) => void;
   onNewTab: () => void;
@@ -11,27 +12,30 @@ interface TabBarProps {
 
 export function TabBar({ tabs, activeTabId, onTabClick, onTabClose, onNewTab }: TabBarProps) {
   return (
-    <div className="flex items-center bg-[#f5f5f7] dark:bg-[#2d2d2d] border-b border-[#d2d2d7] dark:border-[#3d3d3d] overflow-x-auto">
-      {tabs.map((tab) => (
-        <Tab
-          key={tab.id}
-          tab={tab}
-          isActive={tab.id === activeTabId}
-          onClick={() => onTabClick(tab.id)}
-          onClose={(e) => {
-            e.stopPropagation();
-            onTabClose(tab.id);
-          }}
-        />
-      ))}
+    <div className="relative flex items-end h-[40px] bg-[var(--color-browser-surface)] overflow-x-auto no-scrollbar">
+      <div className="absolute inset-x-0 bottom-0 h-[1px] bg-[var(--color-browser-border)]" />
+      
+      <div className="flex items-end gap-0 px-1 py-0 min-h-full">
+        {tabs.map((tab) => (
+          <Tab
+            key={tab.id}
+            tab={tab}
+            isActive={tab.id === activeTabId}
+            onClick={() => onTabClick(tab.id)}
+            onClose={(e) => {
+              e.stopPropagation();
+              onTabClose(tab.id);
+            }}
+          />
+        ))}
+      </div>
+      
       <button
         onClick={onNewTab}
-        className="flex items-center justify-center w-8 h-8 mx-1 rounded-md hover:bg-[#d1d1d6] dark:hover:bg-[#3a3a3c] transition-colors"
+        className="flex items-center justify-center w-[32px] h-[32px] my-auto ml-1 rounded-[var(--radius-md)] text-[var(--color-browser-text-tertiary)] hover:bg-[var(--color-browser-bg)] hover:text-[var(--color-browser-text-secondary)] transition-all duration-[var(--transition-fast)]"
         aria-label="New tab"
       >
-        <svg className="w-4 h-4 text-[#86868b] dark:text-[#98989d]" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M8 3v10M3 8h10" strokeLinecap="round" />
-        </svg>
+        <Plus className="w-4 h-4" strokeWidth={2} />
       </button>
     </div>
   );

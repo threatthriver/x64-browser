@@ -1,69 +1,93 @@
-import { invoke } from '@tauri-apps/api/core';
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { Minus, Square, X, Copy, Chrome } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
-interface TitleBarProps {
-  title?: string;
-}
+const { ipcRenderer } = window.require('electron');
 
-export function TitleBar({ title = 'X64 Browser' }: TitleBarProps) {
-  const appWindow = getCurrentWindow();
+export function TitleBar({ title = 'X64 Browser' }: { title?: string }) {
+  const [isMaximized, setIsMaximized] = useState(false);
 
-  const handleMinimize = async () => {
-    await invoke('minimize_window');
+  useEffect(() => {
+    const checkMaximized = async () => {
+      const maximized = await ipcRenderer.invoke('is-maximized');
+      setIsMaximized(maximized);
+    };
+    checkMaximized();
+    
+    const handleMaximizeChange = () => {
+      checkMaximized();
+    };
+    ipcRenderer.on('window-maximized', handleMaximizeChange);
+    ipcRenderer.on('window-unmaximized', handleMaximizeChange);
+    
+    return () => {
+      ipcRenderer.removeListener('window-maximized', handleMaximizeChange);
+      ipcRenderer.removeListener('window-unmaximized', handleMaximizeChange);
+    };
+  }, []);
+
+  const handleMinimize = () => {
+    ipcRenderer.send('minimize-window');
   };
 
-  const handleMaximize = async () => {
-    await invoke('maximize_window');
+  const handleMaximize = () => {
+    ipcRenderer.send('maximize-window');
+    setIsMaximized(!isMaximized);
   };
 
-  const handleClose = async () => {
-    await invoke('close_window');
-  };
-
-  const handleDragStart = async () => {
-    await appWindow.startDragging();
+  const handleClose = () => {
+    ipcRenderer.send('close-window');
   };
 
   return (
     <div
-      className="h-7 bg-[#f5f5f7] dark:bg-[#2d2d2d] flex items-center justify-between px-3 select-none border-b border-[#d2d2d7] dark:border-[#3d3d3d]"
-      onMouseDown={handleDragStart}
+      className="h-[40px] bg-[var(--color-browser-bg)] flex items-center justify-between px-3 select-none border-b border-[var(--color-browser-border)]"
+      style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
     >
-      <div className="flex items-center gap-2">
-        <div className="flex gap-1.5" onMouseDown={(e) => e.stopPropagation()}>
+      <div 
+        className="flex items-center gap-2" 
+        onMouseDown={(e) => e.stopPropagation()}
+        style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+      >
+        <div className="flex items-center gap-1.5">
           <button
             onClick={handleClose}
-            className="w-3 h-3 rounded-full bg-[#ff5f56] hover:opacity-80 transition-opacity flex items-center justify-center"
+            className="w-[14px] h-[14px] rounded-full bg-[#ff5f57] hover:bg-[#ff3b30] transition-colors flex items-center justify-center group"
             aria-label="Close"
           >
-            <svg className="w-2 h-2 text-[#4d0000] opacity-0 hover:opacity-100" viewBox="0 0 10 10" fill="currentColor">
-              <path d="M1 1L9 9M9 1L1 9" stroke="#4d0000" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-            </svg>
+            <X className="w-[8px] h-[8px] text-[#4d0000] opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={3} />
           </button>
           <button
             onClick={handleMinimize}
-            className="w-3 h-3 rounded-full bg-[#ffbd2e] hover:opacity-80 transition-opacity flex items-center justify-center"
+            className="w-[14px] h-[14px] rounded-full bg-[#febd2e] hover:bg-[#ffa500] transition-colors flex items-center justify-center group"
             aria-label="Minimize"
           >
-            <svg className="w-2 h-1 opacity-0 hover:opacity-100" viewBox="0 0 10 3" fill="#995700">
-              <rect width="8" height="1.5" x="1" y="1" fill="#995700" />
-            </svg>
+            <Minus className="w-[8px] h-[8px] text-[#995700] opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={3} />
           </button>
           <button
             onClick={handleMaximize}
-            className="w-3 h-3 rounded-full bg-[#27c93f] hover:opacity-80 transition-opacity flex items-center justify-center"
+            className="w-[14px] h-[14px] rounded-full bg-[#27c93f] hover:bg-[#1db954] transition-colors flex items-center justify-center group"
             aria-label="Maximize"
           >
-            <svg className="w-2 h-2 opacity-0 hover:opacity-100" viewBox="0 0 10 10" fill="none" stroke="#006500" strokeWidth="1.2">
-              <rect x="1.5" y="1.5" width="7" height="7" />
-            </svg>
+            {isMaximized ? (
+              <Copy className="w-[7px] h-[7px] text-[#006500] opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={3} />
+            ) : (
+              <Square className="w-[7px] h-[7px] text-[#006500] opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={3} />
+            )}
           </button>
         </div>
       </div>
-      <div className="absolute left-1/2 -translate-x-1/2 text-xs text-[#86868b] dark:text-[#98989d] font-medium">
-        {title}
+      
+      <div 
+        className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5"
+        style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+      >
+        <Chrome className="w-3.5 h-3.5 text-[var(--color-browser-text-tertiary)]" strokeWidth={2} />
+        <span className="text-[11px] text-[var(--color-browser-text-tertiary)] font-medium tracking-tight">
+          {title}
+        </span>
       </div>
-      <div className="w-14" />
+      
+      <div className="w-[60px]" />
     </div>
   );
 }

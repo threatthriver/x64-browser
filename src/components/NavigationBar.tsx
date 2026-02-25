@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
+import { ArrowLeft, ArrowRight, Lock, Star, MoreHorizontal, RefreshCcw, Loader2, Shield, Search } from 'lucide-react';
 
 interface NavigationBarProps {
   url: string;
   isLoading: boolean;
+  loadProgress?: number;
   canGoBack: boolean;
   canGoForward: boolean;
   onNavigate: (url: string) => void;
@@ -16,6 +18,7 @@ interface NavigationBarProps {
 export function NavigationBar({
   url,
   isLoading,
+  loadProgress = 0,
   canGoBack,
   canGoForward,
   onNavigate,
@@ -33,119 +36,168 @@ export function NavigationBar({
     setInputValue(url);
   }, [url]);
 
+  useEffect(() => {
+    const handleFocusUrl = () => {
+      inputRef.current?.focus();
+    };
+    window.addEventListener('focus-url', handleFocusUrl);
+    return () => window.removeEventListener('focus-url', handleFocusUrl);
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    let navigateUrl = inputValue.trim();
-    if (!navigateUrl.startsWith('http://') && !navigateUrl.startsWith('https://')) {
-      if (navigateUrl.includes('.') && !navigateUrl.includes(' ')) {
-        navigateUrl = `https://${navigateUrl}`;
+    let searchUrl = inputValue.trim();
+    
+    if (!searchUrl.startsWith('http://') && !searchUrl.startsWith('https://') && !searchUrl.startsWith('about:')) {
+      if (searchUrl.includes('.') && !searchUrl.includes(' ')) {
+        searchUrl = 'https://' + searchUrl;
       } else {
-        navigateUrl = `https://duckduckgo.com/?q=${encodeURIComponent(navigateUrl)}`;
+        searchUrl = 'https://www.google.com/search?q=' + encodeURIComponent(searchUrl);
       }
     }
-    onNavigate(navigateUrl);
+    
+    onNavigate(searchUrl);
     inputRef.current?.blur();
   };
 
   const getDomain = (urlString: string) => {
     try {
-      const url = new URL(urlString);
-      return url.hostname;
+      if (urlString.startsWith('about:')) return urlString;
+      const urlObj = new URL(urlString);
+      return urlObj.hostname + (urlObj.pathname !== '/' ? urlObj.pathname : '');
     } catch {
       return urlString;
     }
   };
 
   const isSecure = url.startsWith('https://');
+  const isSearchEngine = url.includes('google.com/search') || url.includes('bing.com/search');
 
   return (
-    <div className="flex items-center gap-2 px-3 py-2 bg-[#e8e8ed] dark:bg-[#3a3a3c] border-b border-[#d2d2d7] dark:border-[#3d3d3d]">
+    <div className="relative flex items-center gap-1.5 px-2.5 py-1.5 bg-[var(--color-browser-bg)] border-b border-[var(--color-browser-border)]">
       <div className="flex items-center gap-1">
         <button
           onClick={onGoBack}
           disabled={!canGoBack}
-          className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
-            canGoBack ? 'hover:bg-[#d1d1d6] dark:hover:bg-[#4a4a4c]' : 'opacity-40 cursor-not-allowed'
-          }`}
+          className={`
+            w-[32px] h-[32px] flex items-center justify-center rounded-[var(--radius-md)]
+            transition-all duration-[var(--transition-fast)] group
+            ${canGoBack 
+              ? 'hover:bg-[var(--color-browser-surface)] text-[var(--color-browser-text-secondary)] hover:text-[var(--color-browser-text)]' 
+              : 'opacity-30 cursor-not-allowed text-[var(--color-browser-text-tertiary)]'
+            }
+          `}
           aria-label="Go back"
         >
-          <svg className="w-4 h-4 text-[#1d1d1f] dark:text-[#f5f5f7]" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M10 3L5 8l5 5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <ArrowLeft className="w-[17px] h-[17px] transition-transform group-hover:scale-105 group-active:scale-95" strokeWidth={2} />
         </button>
         <button
           onClick={onGoForward}
           disabled={!canGoForward}
-          className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
-            canGoForward ? 'hover:bg-[#d1d1d6] dark:hover:bg-[#4a4a4c]' : 'opacity-40 cursor-not-allowed'
-          }`}
+          className={`
+            w-[32px] h-[32px] flex items-center justify-center rounded-[var(--radius-md)]
+            transition-all duration-[var(--transition-fast)] group
+            ${canGoForward 
+              ? 'hover:bg-[var(--color-browser-surface)] text-[var(--color-browser-text-secondary)] hover:text-[var(--color-browser-text)]' 
+              : 'opacity-30 cursor-not-allowed text-[var(--color-browser-text-tertiary)]'
+            }
+          `}
           aria-label="Go forward"
         >
-          <svg className="w-4 h-4 text-[#1d1d1f] dark:text-[#f5f5f7]" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M6 3l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-        <button
-          onClick={isLoading ? onStop : onRefresh}
-          className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#d1d1d6] dark:hover:bg-[#4a4a4c] transition-colors"
-          aria-label={isLoading ? 'Stop' : 'Refresh'}
-        >
-          {isLoading ? (
-            <svg className="w-4 h-4 text-[#1d1d1f] dark:text-[#f5f5f7]" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M3 3v10h10" strokeLinecap="round" />
-            </svg>
-          ) : (
-            <svg className="w-4 h-4 text-[#1d1d1f] dark:text-[#f5f5f7]" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M2 8a6 6 0 0 1 11.17-2M14 8a6 6 0 0 1-11.17 2" strokeLinecap="round" />
-              <path d="M14 2v4h-4" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M2 14V10h4" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          )}
+          <ArrowRight className="w-[17px] h-[17px] transition-transform group-hover:scale-105 group-active:scale-95" strokeWidth={2} />
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex-1 flex items-center">
-        <div className="flex-1 flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-[#1e1e1e] rounded-lg border border-[#d2d2d7] dark:border-[#3d3d3d] focus-within:border-[#007aff] focus-within:ring-1 focus-within:ring-[#007aff]">
-          {isSecure && (
-            <svg className="w-4 h-4 text-[#27c93f] flex-shrink-0" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 1l6 3v4c0 3.5-2.5 6-6 7-3.5-1-6-3.5-6-7V4l6-3z" />
-              <path d="M6 8l2 2 3-3" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+      <form onSubmit={handleSubmit} className="flex-1 flex items-center max-w-[680px] mx-auto">
+        <div 
+          className={`
+            flex-1 flex items-center gap-2.5 px-3.5 py-2 rounded-[var(--radius-xl)] 
+            bg-[var(--color-browser-surface)] 
+            transition-all duration-[var(--transition-normal)]
+            border border-transparent
+            ${isFocused 
+              ? 'bg-[var(--color-browser-bg)] border-[var(--color-browser-accent)] shadow-[var(--shadow-browser-glow)]' 
+              : 'hover:bg-[var(--color-browser-surface-hover)]'
+            }
+          `}
+        >
+          {isLoading ? (
+            <button
+              type="button"
+              onClick={onStop}
+              className="flex items-center justify-center w-5 h-5 text-[var(--color-browser-text-secondary)] hover:text-[var(--color-browser-warning)] transition-colors"
+              aria-label="Stop loading"
+            >
+              <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onRefresh}
+              className="flex items-center justify-center w-5 h-5 text-[var(--color-browser-text-secondary)] hover:text-[var(--color-browser-text)] transition-colors"
+              aria-label="Refresh page"
+            >
+              <RefreshCcw className="w-4 h-4" strokeWidth={2} />
+            </button>
           )}
-          <input
-            ref={inputRef}
-            type="text"
-            value={isFocused ? inputValue : getDomain(inputValue)}
-            onChange={(e) => setInputValue(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            placeholder="Search or enter URL"
-            className="flex-1 text-sm text-[#1d1d1f] dark:text-[#f5f5f7] bg-transparent outline-none placeholder-[#86868b]"
-          />
+          
+          <div className="flex-1 flex items-center gap-2 min-w-0">
+            {isSecure && !isSearchEngine && !isFocused && (
+              <div className="flex items-center gap-1 text-[var(--color-browser-success)] flex-shrink-0">
+                <Shield className="w-3.5 h-3.5" strokeWidth={2.5} />
+              </div>
+            )}
+            {!isSecure && url && !url.startsWith('about:') && !isFocused && (
+              <Lock className="w-3.5 h-3.5 text-[var(--color-browser-text-tertiary)] flex-shrink-0" strokeWidth={2.5} />
+            )}
+            
+            <input
+              ref={inputRef}
+              type="text"
+              value={isFocused ? inputValue : (isSearchEngine ? inputValue : getDomain(inputValue))}
+              onChange={(e) => setInputValue(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              placeholder="Search or enter URL"
+              className="flex-1 text-[13px] text-[var(--color-browser-text)] bg-transparent outline-none placeholder-[var(--color-browser-text-tertiary)] min-w-0"
+              spellCheck={false}
+            />
+          </div>
+          
+          <div className="flex items-center gap-0.5 flex-shrink-0">
+            {url && !isFocused && (
+              <button
+                type="button"
+                onClick={onAddBookmark}
+                className="w-7 h-7 flex items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-browser-text-tertiary)] hover:text-[var(--color-browser-text-secondary)] hover:bg-[var(--color-browser-surface)] transition-all duration-[var(--transition-fast)]"
+                aria-label="Add bookmark"
+              >
+                <Star className="w-4 h-4" strokeWidth={2} />
+              </button>
+            )}
+            {!isFocused && (
+              <button
+                type="button"
+                className="w-7 h-7 flex items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-browser-text-tertiary)] hover:text-[var(--color-browser-text-secondary)] hover:bg-[var(--color-browser-surface)] transition-all duration-[var(--transition-fast)]"
+                aria-label="More options"
+              >
+                <MoreHorizontal className="w-4 h-4" strokeWidth={2} />
+              </button>
+            )}
+          </div>
         </div>
       </form>
 
-      <div className="flex items-center gap-1">
-        <button
-          className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#d1d1d6] dark:hover:bg-[#4a4a4c] transition-colors"
-          aria-label="Menu"
-        >
-          <svg className="w-4 h-4 text-[#86868b]" viewBox="0 0 16 16" fill="currentColor">
-            <circle cx="8" cy="3" r="1.5" />
-            <circle cx="8" cy="8" r="1.5" />
-            <circle cx="8" cy="13" r="1.5" />
-          </svg>
-        </button>
-        <button
-          onClick={onAddBookmark}
-          className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#d1d1d6] dark:hover:bg-[#4a4a4c] transition-colors"
-          aria-label="Add Bookmark"
-        >
-          <svg className="w-4 h-4 text-[#86868b]" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M3 2h10v14l-5-3-5 3V2z" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-      </div>
+      <div className="w-[32px] h-[32px]" />
+      
+      {isLoading && loadProgress > 0 && loadProgress < 1 && (
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--color-browser-border)]">
+          <div 
+            className="h-full bg-[var(--color-browser-accent)] transition-all duration-150"
+            style={{ width: `${loadProgress * 100}%` }}
+          />
+        </div>
+      )}
     </div>
   );
 }
